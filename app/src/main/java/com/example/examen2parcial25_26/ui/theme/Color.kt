@@ -2,10 +2,14 @@ package com.example.examen2parcial25_26.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val BluePrimary = Color(0xFF1E3A8A)
+val BlueSecondary = Color(0xFF3B82F6)
+val BlueBackground = Color(0xFFF1F5F9)
+val BlueSurface = Color(0xFFE2E8F0)
+val BlueOnPrimary = Color.White
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Colores adicionales
+val TextPrimary = Color(0xFF111827)       // Texto dentro de cards
+val TextSecondary = Color(0xFF6B7280)     // Texto secundario / subtítulos
+val BlueAccent = Color(0xFF60A5FA)        // Botones de acción / iconos destacados
+val RedError = Color(0xFFDC2626)          // Mensajes de error
