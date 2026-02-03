@@ -25,7 +25,7 @@ class ContactosViewModel: ViewModel() {
 
     fun actualizarContacto(contactoOriginal: Contacto,contactoactualizado: Contacto)
     {
-        //voy a buscar el heroeoriginal
+        //voy a buscar el
         val indice=contactos.indexOf(contactoOriginal)
         if(indice!=-1)
         {

@@ -15,6 +15,7 @@ import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.examen2parcial25_26.R
 import com.example.examen2parcial25_26.navegacion.Ruta
 import com.example.examen2parcial25_26.ui.theme.BlueAccent
@@ -30,6 +31,7 @@ sealed class BottomNavItem(var ic: ImageVector?, val tit: String, val ruta: Ruta
 @Composable
 fun mibottombar(
     selectedItem: Ruta,
+    nav_control: NavHostController,
     onItemSelected: (Ruta) -> Unit
 ) {
     //Defino los elementos
@@ -44,7 +46,8 @@ fun mibottombar(
         elementos_barrainferior.forEach { item ->
             NavigationBarItem(
                 selected = item.ruta == selectedItem,
-                onClick = { onItemSelected(item.ruta) },
+                onClick = { onItemSelected(item.ruta)
+                          nav_control.navigate(item.ruta)},
                 icon = { Icon(item.ic!!, contentDescription = item.tit, Modifier.size(36.dp)) },
                 label = { Text(text = item.tit) },
                 colors= NavigationBarItemDefaults.colors(

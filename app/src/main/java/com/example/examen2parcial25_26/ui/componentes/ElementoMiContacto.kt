@@ -3,6 +3,7 @@ package com.example.examen2parcial25_26.ui.componentes
 import android.content.Context
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,7 +35,7 @@ import java.io.File
 
 @Composable
 
-fun elemento_contacto(contacto: Contacto) {
+fun elemento_contacto(contacto: Contacto,onclick_cambiarfoto:(Contacto)->Unit) {
 
     Card(
         modifier = Modifier
@@ -49,7 +50,10 @@ fun elemento_contacto(contacto: Contacto) {
                 .fillMaxWidth()
         ) {
 
-            ImagenContactoDesdeRuta(contacto.foto)
+
+
+            Image(painter=if(contacto.foto!=null) rememberAsyncImagePainter(File(contacto.foto)) else  painterResource(R.drawable.avatar),contentDescription = "foto",
+                modifier = Modifier.clickable{ onclick_cambiarfoto(contacto) }.size(64.dp))
 
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -90,9 +94,9 @@ fun elemento_contacto(contacto: Contacto) {
 @Composable
 fun elemento_contacto_preview()
 {
-    elemento_contacto(Contacto("Luis","98438323","add@gmail.com",null))
+    elemento_contacto(Contacto("Luis","98438323","add@gmail.com",null),{})
 }
-
+/*
 /*Funcion para cargar una imagen desde una ruta interna de la app */
 @Composable
 fun ImagenContactoDesdeRuta(ruta: String?) {
@@ -105,18 +109,8 @@ fun ImagenContactoDesdeRuta(ruta: String?) {
         Image( painter = painterResource(R.drawable.avatar),
             contentDescription = null,
             modifier = Modifier.size(64.dp) ) }
-}
+}*/
 
 
 
-/*Funcion para generar una URI, se deberá invocar antes de lanzar
-* la intent de capturar imagen */
-fun crearArchivoImagen(context: Context): Uri {
-    val nombreArchivo = "contacto_${System.currentTimeMillis()}.jpg"
-   val file= File(context.filesDir, nombreArchivo)
-   return  FileProvider.getUriForFile(
-        context,
-        "${context.packageName}.provider",
-        file
-    )
-}
+

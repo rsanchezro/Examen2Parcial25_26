@@ -1,11 +1,14 @@
 package com.example.examen2parcial25_26
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,7 +26,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.FileProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.examen2parcial25_26.data.ProveedorContacto
 import com.example.examen2parcial25_26.data.ProveedorContactoDispositivo
@@ -35,6 +41,7 @@ import com.example.examen2parcial25_26.ui.componentes.mibottombar
 import com.example.examen2parcial25_26.ui.theme.BlueAccent
 import com.example.examen2parcial25_26.ui.theme.BlueOnPrimary
 import com.example.examen2parcial25_26.ui.theme.Examen2Parcial25_26Theme
+import com.example.examen2parcial25_26.viewmodel.ContactosViewModel
 import java.io.File
 
 class MainActivity : ComponentActivity() {
@@ -58,8 +65,14 @@ class MainActivity : ComponentActivity() {
         try {
             val archivoDestino = File(context.filesDir, "contactos.json")
 
-            // Si ya existe, no hacemos nada
-            if (archivoDestino.exists()) return
+            // Si ya existe, lo elimino, para de esta forma con añadir los ficheros
+            //al json de asset ya se actualizan los contactos
+            if (archivoDestino.exists())
+            {
+                archivoDestino.delete()
+
+
+            }
 
             // Abrimos el archivo desde assets
             val inputStream = context.assets.open("contactos.json")
@@ -83,14 +96,32 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun pantallaPrincipal()
 {
+    val contexto=LocalContext.current
+    //Instancio el viewModel
+    val miviewmodel: ContactosViewModel= viewModel()
     //Definimos el controlador de navegación
     val controlador_navegacion= rememberNavController()
     //Definimos el elemento seleccionado en el bottombar
     var elemento_seleccionado by remember { mutableStateOf<Ruta>(Ruta.ContactosApp) }
+    //Defino un archivo para guardar la imagen
+    var file_imagen by remember { mutableStateOf<File?>(null) }
+    //Defino el launcher para la intent de tomar foto
+    var launcher_foto= rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture(),{
+            exito->
+            if(exito)
+            {
+                //La foto se tomo bien
+
+
+            }
+        }
+    )
+
 
     Scaffold (modifier = Modifier.fillMaxSize().statusBarsPadding(),
         topBar = { miTopAppBar() },
-        bottomBar = { mibottombar(elemento_seleccionado){elemento_seleccionado=it} },
+        bottomBar = { mibottombar(elemento_seleccionado,controlador_navegacion){elemento_seleccionado=it} },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -107,9 +138,38 @@ fun pantallaPrincipal()
         },
 
         floatingActionButtonPosition = FabPosition.End){
-        miNavHost(Modifier.padding(it),controlador_navegacion)
+        miNavHost(Modifier.padding(it),controlador_navegacion,miviewmodel.contactos,
+            onclick_cambiarfoto = { contacto ->
+                //Obtengo un fichero para guardar la imagen
+                file_imagen=crearArchivoImagen(contexto,contacto.nombre)
+
+                //Aqui abro la intent de la camara
+                launcher_foto.launch(crearUriImagen(contexto, file_imagen!!))
+
+                miviewmodel.actualizarContacto(contacto,contacto.copy(foto = file_imagen!!.absolutePath))
+
+
+        })
 
     }
+}
+
+
+/*Funcion para generar una URI, se deberá invocar antes de lanzar
+* la intent de capturar imagen */
+
+fun crearArchivoImagen(context:Context,nombre:String):File{
+    val nombreArchivo="cont_${nombre}_${System.currentTimeMillis()}.jpg"
+    return File(context.filesDir,nombreArchivo)
+}
+fun crearUriImagen(context: Context,f:File): Uri {
+
+
+    return  FileProvider.getUriForFile(
+        context,
+        "${context.packageName}.provider",
+        f
+    )
 }
 
 
