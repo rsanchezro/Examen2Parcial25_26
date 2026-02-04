@@ -74,7 +74,9 @@ fun elemento_contacto(contacto: Contacto,onclick_cambiarfoto:(Contacto)->Unit) {
 
 
             Image(painter=if(contacto.foto!=null) rememberAsyncImagePainter(File(contacto.foto)) else  painterResource(R.drawable.avatar),contentDescription = "foto",
-                modifier = Modifier.clickable{ onclick_cambiarfoto(contacto) }.size(64.dp))
+                modifier = Modifier.clickable{
+                    onclick_cambiarfoto(contacto)
+                }.size(64.dp))
 
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -117,8 +119,8 @@ fun elemento_contacto_preview()
 {
     elemento_contacto(Contacto("Luis","98438323","add@gmail.com",null),{})
 }
-/*
-/*Funcion para cargar una imagen desde una ruta interna de la app */
+
+//Funcion para cargar una imagen desde una ruta interna de la app
 @Composable
 fun ImagenContactoDesdeRuta(ruta: String?) {
     if (ruta != null) {
@@ -130,7 +132,7 @@ fun ImagenContactoDesdeRuta(ruta: String?) {
         Image( painter = painterResource(R.drawable.avatar),
             contentDescription = null,
             modifier = Modifier.size(64.dp) ) }
-}*/
+}
 
 
 
