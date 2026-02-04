@@ -21,4 +21,3 @@ fun crearUriImagen(context: Context,f:File): Uri {
         f
     )
 }
-d
