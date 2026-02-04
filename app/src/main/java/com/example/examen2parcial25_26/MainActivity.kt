@@ -103,20 +103,7 @@ fun pantallaPrincipal()
     val controlador_navegacion= rememberNavController()
     //Definimos el elemento seleccionado en el bottombar
     var elemento_seleccionado by remember { mutableStateOf<Ruta>(Ruta.ContactosApp) }
-    //Defino un archivo para guardar la imagen
-    var file_imagen by remember { mutableStateOf<File?>(null) }
-    //Defino el launcher para la intent de tomar foto
-    var launcher_foto= rememberLauncherForActivityResult(
-        ActivityResultContracts.TakePicture(),{
-            exito->
-            if(exito)
-            {
-                //La foto se tomo bien
 
-
-            }
-        }
-    )
 
 
     Scaffold (modifier = Modifier.fillMaxSize().statusBarsPadding(),
@@ -143,7 +130,7 @@ fun pantallaPrincipal()
                 //Obtengo un fichero para guardar la imagen
                 file_imagen=crearArchivoImagen(contexto,contacto.nombre)
 
-                //Aqui abro la intent de la camara
+                //Aqui abro la intent de la camara, pasandole la uri de la imagen
                 launcher_foto.launch(crearUriImagen(contexto, file_imagen!!))
 
                 miviewmodel.actualizarContacto(contacto,contacto.copy(foto = file_imagen!!.absolutePath))
@@ -155,21 +142,5 @@ fun pantallaPrincipal()
 }
 
 
-/*Funcion para generar una URI, se deberá invocar antes de lanzar
-* la intent de capturar imagen */
-
-fun crearArchivoImagen(context:Context,nombre:String):File{
-    val nombreArchivo="cont_${nombre}_${System.currentTimeMillis()}.jpg"
-    return File(context.filesDir,nombreArchivo)
-}
-fun crearUriImagen(context: Context,f:File): Uri {
-
-
-    return  FileProvider.getUriForFile(
-        context,
-        "${context.packageName}.provider",
-        f
-    )
-}
 
 

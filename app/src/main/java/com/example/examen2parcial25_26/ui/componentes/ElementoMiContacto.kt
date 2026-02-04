@@ -2,6 +2,8 @@ package com.example.examen2parcial25_26.ui.componentes
 
 import android.content.Context
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,6 +18,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -36,6 +42,21 @@ import java.io.File
 @Composable
 
 fun elemento_contacto(contacto: Contacto,onclick_cambiarfoto:(Contacto)->Unit) {
+    //Defino el launcher para obtener una foto
+    //Defino un archivo para guardar la imagen
+    var file_imagen by remember { mutableStateOf<File?>(null) }
+    //Defino el launcher para la intent de tomar foto
+    var launcher_foto= rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture(),{
+                exito->
+            if(exito)
+            {
+                //La foto se tomo bien
+
+
+            }
+        }
+    )
 
     Card(
         modifier = Modifier
