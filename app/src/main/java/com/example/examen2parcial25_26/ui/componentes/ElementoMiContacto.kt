@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,10 +42,13 @@ import java.io.File
 
 @Composable
 
-fun elemento_contacto(contacto: Contacto,onclick_cambiarfoto:(Contacto)->Unit) {
-    //Defino el launcher para obtener una foto
-    //Defino un archivo para guardar la imagen
-    var file_imagen by remember { mutableStateOf<File?>(null) }
+fun elemento_contacto(contacto: Contacto,onclick_cambiarfoto:(original:Contacto,nuevo: Contacto)->Unit) {
+    //Obtengo el contexto
+    val contexto=LocalContext.current
+    //Defino un objeto File vinculado a la Imagen
+    var file_imagen by remember { mutableStateOf<File?>(contacto.foto?.let { File(it) }) }
+    //Declaro un File para generar el nombre del fichero, no necesita ser state
+    var mifile:File?=null
     //Defino el launcher para la intent de tomar foto
     var launcher_foto= rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicture(),{
@@ -52,7 +56,10 @@ fun elemento_contacto(contacto: Contacto,onclick_cambiarfoto:(Contacto)->Unit) {
             if(exito)
             {
                 //La foto se tomo bien
-
+                //cambio el fichero de la foto para que cambie la imagen
+                file_imagen=mifile
+                //invoco a la función para que el superior cambie la foto del contacto
+                onclick_cambiarfoto(contacto,contacto.copy(foto=file_imagen!!.absolutePath))
 
             }
         }
@@ -73,10 +80,16 @@ fun elemento_contacto(contacto: Contacto,onclick_cambiarfoto:(Contacto)->Unit) {
 
 
 
-            Image(painter=if(contacto.foto!=null) rememberAsyncImagePainter(File(contacto.foto)) else  painterResource(R.drawable.avatar),contentDescription = "foto",
-                modifier = Modifier.clickable{
-                    onclick_cambiarfoto(contacto)
-                }.size(64.dp))
+           ImagenContactoDesdeRuta(file_imagen ){
+               //Genero el FILE
+               mifile=crearFile(contexto)
+               //Genero una URI de una imagen
+               var  miuri=crearArchivoImagen(contexto,mifile)
+               //Lanzo el launcher para tomar la foto
+               launcher_foto.launch(miuri)
+
+
+           }
 
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -117,23 +130,49 @@ fun elemento_contacto(contacto: Contacto,onclick_cambiarfoto:(Contacto)->Unit) {
 @Composable
 fun elemento_contacto_preview()
 {
-    elemento_contacto(Contacto("Luis","98438323","add@gmail.com",null),{})
+    elemento_contacto(Contacto("Luis","98438323","add@gmail.com",null),{a,b->})
 }
 
 //Funcion para cargar una imagen desde una ruta interna de la app
 @Composable
-fun ImagenContactoDesdeRuta(ruta: String?) {
-    if (ruta != null) {
-        Image( painter = rememberAsyncImagePainter(File(ruta)),
+fun ImagenContactoDesdeRuta(fichero: File?,click_foto:()->Unit) {
+
+    if (fichero != null) {
+
+        Image( painter = rememberAsyncImagePainter(fichero),
             contentDescription = null,
-            modifier = Modifier.size(64.dp),
+            modifier = Modifier.clickable{
+                //Hago click en la foto, debería lanzar el launcher
+                click_foto()
+
+            }.size(64.dp),
              ) }
     else {
         Image( painter = painterResource(R.drawable.avatar),
             contentDescription = null,
-            modifier = Modifier.size(64.dp) ) }
+            modifier = Modifier.clickable{
+                //Hago click en la foto
+                click_foto()
+            }.size(64.dp) ) }
 }
 
+
+
+//Funcion para crear un File
+fun crearFile(context:Context):File{
+    val nombreArchivo = "contacto_${System.currentTimeMillis()}.jpg"
+    return File(context.filesDir, nombreArchivo)
+}
+/*Funcion para generar una URI, se deberá invocar antes de lanzar
+* la intent de capturar imagen */
+fun crearArchivoImagen(context: Context,file:File): Uri {
+
+    return  FileProvider.getUriForFile(
+        context,
+        "${context.packageName}.provider",
+        file
+    )
+}
 
 
 

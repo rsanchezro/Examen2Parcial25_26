@@ -126,14 +126,10 @@ fun pantallaPrincipal()
 
         floatingActionButtonPosition = FabPosition.End){
         miNavHost(Modifier.padding(it),controlador_navegacion,miviewmodel.contactos,
-            onclick_cambiarfoto = { contacto ->
-                //Obtengo un fichero para guardar la imagen
-                file_imagen=crearArchivoImagen(contexto,contacto.nombre)
+            onclick_cambiarfoto = { original,nuevo ->
 
-                //Aqui abro la intent de la camara, pasandole la uri de la imagen
-                launcher_foto.launch(crearUriImagen(contexto, file_imagen!!))
 
-                miviewmodel.actualizarContacto(contacto,contacto.copy(foto = file_imagen!!.absolutePath))
+                miviewmodel.actualizarContacto(original,nuevo)
 
 
         })

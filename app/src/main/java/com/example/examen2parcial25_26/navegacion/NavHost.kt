@@ -12,7 +12,7 @@ import com.example.examen2parcial25_26.viewmodel.ContactosViewModel
 
 
 @Composable
-fun miNavHost(modificador: Modifier= Modifier, control_navegacion: NavHostController,contactos: MutableList<Contacto> , onclick_cambiarfoto:(c:Contacto)->Unit)
+fun miNavHost(modificador: Modifier= Modifier, control_navegacion: NavHostController,contactos: MutableList<Contacto> , onclick_cambiarfoto:(ori:Contacto,nuevo:Contacto)->Unit)
 {
 
     NavHost(navController = control_navegacion,

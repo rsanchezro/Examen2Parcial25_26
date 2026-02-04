@@ -7,7 +7,7 @@ import com.example.examen2parcial25_26.modelo.Contacto
 import com.example.examen2parcial25_26.ui.componentes.elemento_contacto
 
 @Composable
-fun pantallaMisContactos(miscontactos:MutableList<Contacto>,onclick_cambiarfoto:(Contacto)->Unit)
+fun pantallaMisContactos(miscontactos:MutableList<Contacto>,onclick_cambiarfoto:(ori:Contacto,nuevo:Contacto)->Unit)
 {
     LazyColumn {
         items(miscontactos){contact->
